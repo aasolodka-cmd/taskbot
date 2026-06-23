@@ -16,6 +16,10 @@ logger = logging.getLogger(__name__)
 db = Database()
 config = Config()
 
+async def post_init(app):
+    from database import init_db
+    await init_db()
+
 
 # ── Меню ────────────────────────────────────────────────────────────────────
 
@@ -506,7 +510,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ── Запуск ───────────────────────────────────────────────────────────────────
 
 def main():
-    app = Application.builder().token(config.BOT_TOKEN).build()
+    app = Application.builder().token(config.BOT_TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("start",     start))
     app.add_handler(CommandHandler("task",      add_task_start))
