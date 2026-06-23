@@ -168,8 +168,8 @@ class Database:
             SELECT id,title,assignee_ids,assignee_name,deadline,done,done_at,reminded,archived
             FROM tasks
             WHERE done=FALSE AND archived=FALSE AND deadline IS NOT NULL AND reminded=FALSE
-              AND deadline::timestamp <= NOW() + (:sec || ' seconds')::interval
-              AND deadline::timestamp > NOW()
+              AND deadline::timestamptz <= NOW() + (:sec || ' seconds')::interval
+              AND deadline::timestamptz > NOW()
         """, sec=str(within_seconds))
         con.close()
         return self._task_rows(rows)
@@ -235,8 +235,8 @@ class Database:
         rows = con.run("""
             SELECT id,title,assignee_ids,assignee_name,scheduled_at,reminded_1h,reminded_5m,done
             FROM calls WHERE done=FALSE
-              AND scheduled_at::timestamp > NOW() + (:f || ' seconds')::interval
-              AND scheduled_at::timestamp <= NOW() + (:t || ' seconds')::interval
+              AND scheduled_at::timestamptz > NOW() + (:f || ' seconds')::interval
+              AND scheduled_at::timestamptz <= NOW() + (:t || ' seconds')::interval
         """, f=str(from_sec), t=str(to_sec))
         con.close()
         return self._call_rows(rows)
